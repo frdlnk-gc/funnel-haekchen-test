@@ -303,7 +303,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;bac
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 
 /* gc-haekchen-v1: zwei getrennte, freiwillige Häkchen */
-.gch{margin:6px 0 14px;text-align:left}
+.gch{margin:6px 0 14px;text-align:left;-webkit-hyphens:manual;hyphens:manual}
+.gch *{-webkit-hyphens:manual;hyphens:manual}
 .gch-ctx{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
 .gch-chip{font-size:12px;font-weight:600;line-height:1.35;background:#f3f5f6;border:1px solid #e1e6ea;border-radius:10px;padding:5px 10px;color:#33414b;max-width:100%;overflow-wrap:anywhere}
 .gch-chip b{font-weight:800;color:#14181c}
