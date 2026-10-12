@@ -900,7 +900,7 @@ function submit(){
    Beide Häkchen sind beim Öffnen leer, Absenden geht immer. Die Entscheidung wird beim ersten
    Absenden eingefroren (feste abgabe_id + Zeitpunkt) und unverändert in jede Folge-Übermittlung
    derselben Anfrage übernommen. Text = exakt der angezeigte Text (aus dem DOM gelesen). */
-var GCH={"schema": "gc-haekchen-v1", "variante": "kunde", "lp": "kunde:flaechenagentur-bw", "fassung": "kunde:flaechenagentur-bw@gc-haekchen-v1", "ds": "https://www.green-careers.de/datenschutz", "ids": {"pool": "pool-kunde-2026-10-12", "hinweis": "hinweis-sie-2026-10-12", "frist": "frist72-sie-2026-10-12", "mail": "jobmail-2026-10-12", "widerruf": "widerruf-sie-2026-10-12b"}, "arbeitsbereich_fest": "Landschaftsplanung und Naturschutz", "anzeigen": ["https://www.green-careers.de/voll-teilzeit-geschaftsfuhrer-unbefristet-in-ostfildern"], "kunden_nr": "09", "kunde_id": "09-flaechenagentur-bw"};
+var GCH={"schema": "gc-haekchen-v1", "variante": "kunde", "lp": "kunde:flaechenagentur-bw", "fassung": "kunde:flaechenagentur-bw@gc-haekchen-v1", "form_version": "haekchen_2026-10-12_v1", "ds": "https://www.green-careers.de/datenschutz", "ids": {"pool": "funnel_kunde_2026-10-12_v1", "hinweis": "hinweis-sie-2026-10-12", "frist": "frist72-sie-2026-10-12", "mail": "funnel_kunde_2026-10-12_v1", "widerruf": "widerruf-sie-2026-10-12b"}, "arbeitsbereich_fest": "Landschaftsplanung und Naturschutz", "anzeigen": ["https://www.green-careers.de/voll-teilzeit-geschaftsfuhrer-unbefristet-in-ostfildern"], "kunden_nr": "09", "kunde_id": "09-flaechenagentur-bw", "source_id": "kunde-flaechenagentur-bw", "ts_event_setzen": true};
 var GCH_SNAP=null, GCH_TOUCH={pool:null,mail:null};
 function gchIso(d){d=d||new Date();var o=-d.getTimezoneOffset(),s=o>=0?'+':'-',a=Math.abs(o);function p(n,l){n=String(n);while(n.length<(l||2))n='0'+n;return n;}
   return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds())+'.'+p(d.getMilliseconds(),3)+s+p(Math.floor(a/60))+':'+p(a%60);}
@@ -935,11 +935,15 @@ function gchSnapshot(anfrageId,extra){
   /* Ohne angezeigten Text gibt es kein Ja (fehlender Beleg = Nein) */
   if(!s.pool_text)s.pool_zustimmung='nein';
   if(!s.mail_text)s.mail_zustimmung='nein';
-  /* Feldnamen laut Auftrag 12.10. (Patric): Kennungen + je Häkchen ein Objekt */
-  s.request_id=s.anfrage_id;s.submission_id=s.abgabe_id;s.form_version=s.formular_fassung;
-  s.source_url=location.host+location.pathname;
-  s.pool_consent={wert:s.pool_zustimmung==='ja',text:s.pool_text,text_version:s.pool_text_fassung,zeitpunkt:t};
-  s.email_jobs_consent={wert:s.mail_zustimmung==='ja',text:s.mail_text,text_version:s.mail_text_fassung,zeitpunkt:t};
+  /* Feldnamen nach Patric (FELDNAMEN_FUER_FREDERIK 13.10.): echte Booleans, immer vorhanden, auch bei zweimal Nein */
+  s.consent_pool=(s.pool_zustimmung==='ja');s.consent_mail=(s.mail_zustimmung==='ja');
+  s.consent_pool_version=s.pool_text_fassung;s.consent_mail_version=s.mail_text_fassung;
+  s.consent_pool_text=s.pool_text;s.consent_mail_text=s.mail_text;
+  s.consent_pool_decided_at=t;s.consent_mail_decided_at=t;
+  s.source_id=GCH.source_id;s.form_version=GCH.form_version;s.source_url=location.host+location.pathname;
+  /* Kundenfunnel hatte bisher weder ts noch event_id (Patric 13.10.): beide = ursprüngliche Abgabe.
+     Auf den allgemeinen Seiten gibt es ts/event_id schon – dort nie überschreiben. */
+  if(GCH.ts_event_setzen){s.ts=t;s.event_id=s.abgabe_id;}
   for(var k in extra)if(Object.prototype.hasOwnProperty.call(extra,k))s[k]=extra[k];
   GCH_SNAP=s;return s;
 }
